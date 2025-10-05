@@ -1,8 +1,9 @@
+import { BASE_URL } from "@/App";
 import type { TodoProp } from "@/types/todo-types";
 
 export const QUERIES = {
 	fetchTodos: async function (): Promise<TodoProp[]> {
-		const response = await fetch("http://localhost:4000/api/todos");
+		const response = await fetch(BASE_URL + "/todos");
 		const data = await response.json();
 
 		if (!response.ok) {
@@ -22,7 +23,7 @@ export const MUTATIONS = {
 			return null;
 		}
 
-		const response = await fetch("http://localhost:4000/api/todos", {
+		const response = await fetch(BASE_URL + "/todos", {
 			method: "POST",
 			headers: {
 				"Content-Type": "application/json",
@@ -45,7 +46,7 @@ export const MUTATIONS = {
 			return null;
 		}
 
-		const response = await fetch(`http://localhost:4000/api/todos/${todo._id}`, {
+		const response = await fetch(BASE_URL + `/todos/${todo._id}`, {
 			method: "PATCH",
 		});
 		const data = await response.json();
@@ -62,7 +63,7 @@ export const MUTATIONS = {
 			return false;
 		}
 
-		const response = await fetch(`http://localhost:4000/api/todos/${todo._id}`, {
+		const response = await fetch(BASE_URL + `/todos/${todo._id}`, {
 			method: "DELETE",
 		});
 		const data = await response.json();
