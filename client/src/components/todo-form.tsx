@@ -1,18 +1,35 @@
 import { useState } from "react";
+import { useQueryClient } from "@tanstack/react-query";
 import { IoMdAdd } from "react-icons/io";
 import { Button, Container, Flex, Input, Spinner } from "@chakra-ui/react";
+
+import { MUTATIONS } from "@/services/todo-services";
 
 export const TodoForm = () => {
 	const [newTodo, setNewTodo] = useState<string>("");
 	const [isPending, setIsPending] = useState<boolean>(false);
 
+	const queryClient = useQueryClient();
+
 	const createTodo = async (e: React.FormEvent) => {
 		e.preventDefault();
-		setIsPending(true)
+		if (!newTodo) {
+			alert('Task cannot be empty!');
+			return;
+		}
+		setIsPending(true);
 
+		const response = await MUTATIONS.createTodo(newTodo);
 
-		setTimeout(() => setIsPending(false), 3000)
+		if (!response) {
+			throw new Error("Unable to update todo")
+		}
+
 		alert("Todo added!");
+		queryClient.invalidateQueries({ queryKey: ["todos"] });
+
+		setNewTodo("");
+		setIsPending(false);
 	};
 
 	return (

@@ -1,33 +1,18 @@
-import { useState } from "react";
+import { useQuery } from "@tanstack/react-query";
 import { Container, Flex, Spinner, Stack, Text } from "@chakra-ui/react";
 
 import { TodoItem } from "@/components/todo-item";
 
-const todos = [
-	{
-		_id: 1,
-		body: "Buy groceries",
-		completed: true,
-	},
-	{
-		_id: 2,
-		body: "Walk the dog",
-		completed: false,
-	},
-	{
-		_id: 3,
-		body: "Do laundry",
-		completed: false,
-	},
-	{
-		_id: 4,
-		body: "Cook dinner",
-		completed: true,
-	},
-];
+import type { TodoProp } from "@/types/todo-types";
+import { QUERIES } from "@/services/todo-services";
 
 export const TodoList = () => {
-	const [isLoading] = useState(false);
+	const { data: todoList, isFetching: todoFetching } = useQuery<TodoProp[]>({
+		queryKey: ["todos"],
+		queryFn: () => QUERIES.fetchTodos(),
+		refetchOnWindowFocus: true,
+		refetchOnMount: true,
+	});
 
 	return (
 		<Container maxW={"900px"}>
@@ -35,12 +20,12 @@ export const TodoList = () => {
 				Today's Tasks
 			</Text>
 
-			{isLoading && (
+			{todoFetching && (
 				<Flex justifyContent={"center"} my={4}>
 					<Spinner size={"xl"} />
 				</Flex>
 			)}
-			{!isLoading && todos?.length === 0 && (
+			{!todoFetching && todoList?.length === 0 && (
 				<Stack alignItems={"center"} gap='3'>
 					<Text fontSize={"xl"} textAlign={"center"} color={"gray.500"}>
 						All tasks completed! 🤞
@@ -49,7 +34,7 @@ export const TodoList = () => {
 				</Stack>
 			)}
 			<Stack gap={3}>
-				{todos?.map((todo) => (
+				{todoList?.map((todo) => (
 					<TodoItem key={todo._id} todo={todo} />
 				))}
 			</Stack>
